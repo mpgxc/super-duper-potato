@@ -1,0 +1,21 @@
+service: super-duper-potato
+
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: us-east-1
+
+functions:
+  main:
+    handler: dist/main.handler
+    events:
+      - http:
+          cors: true
+          method: GET
+          path: /
+      - http:
+          method: ANY
+          path: '{proxy+}'
