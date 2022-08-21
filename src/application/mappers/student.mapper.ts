@@ -4,6 +4,7 @@ import { IMapper } from 'commons/application';
 import { Student, StudentProps } from 'domain/entities/student';
 
 type StudentResponse = StudentProps & {
+  id?: string;
   PK: string;
   SK: string;
 };
@@ -17,7 +18,7 @@ class StudentMapper
   implements IMapper<Student, StudentPersistence | StudentResponse>
 {
   toDomain(data: StudentResponse): Student {
-    const id = data.PK.split('-').pop();
+    const id = data.PK.split('STUDENT-').pop();
 
     return Student.build(
       {
@@ -25,6 +26,17 @@ class StudentMapper
       },
       id,
     );
+  }
+
+  toRender(data: StudentResponse): StudentResponse {
+    Reflect.deleteProperty(data, 'password');
+
+    const id = data.PK.split('STUDENT-').pop();
+
+    return {
+      ...data,
+      id,
+    };
   }
 
   toPersistence(data: Student): StudentPersistence {
