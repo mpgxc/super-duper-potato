@@ -1,5 +1,6 @@
 import { marshall } from '@aws-sdk/util-dynamodb';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 import { StudentMapper } from 'application/mappers/student.mapper';
 import { Maybe } from 'commons/logic';
@@ -9,16 +10,21 @@ import { DynamoRepositoryService } from 'infra/database/dynamo-repository.servic
 
 @Injectable()
 class StudentRespository implements IStudentRespository {
+  private readonly client: DynamoRepositoryService;
+
   constructor(
-    private readonly client: DynamoRepositoryService,
+    client: DynamoRepositoryService,
     private readonly mapper: StudentMapper,
-  ) {}
+    private readonly config: ConfigService,
+  ) {
+    this.client = client.setTableName(this.config.get('AWS_DYNAMODB_TABLE'));
+  }
 
   async update(item: Student): Promise<void> {
     const { document, id, email, name, password, slug } =
       this.mapper.toPersistence(item);
 
-    await this.client.setTableName('SuperDuperPotatoTable').update({
+    await this.client.update({
       Item: marshall({
         PK: `STUDENT-${id}`,
         SK: `PROFILE-${slug}`,
