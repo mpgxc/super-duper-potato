@@ -1,4 +1,4 @@
-import { marshall } from '@aws-sdk/util-dynamodb';
+import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
@@ -41,8 +41,15 @@ class StudentRespository implements IStudentRespository {
     throw new Error('Method not implemented.');
   }
 
-  list(): Promise<Maybe<Array<StudentProps>>> {
-    throw new Error('Method not implemented.');
+  async list(): Promise<Maybe<Array<StudentProps>>> {
+    const students = await this.client.list({
+      FilterExpression: 'begins_with(SK, :SK)',
+      ExpressionAttributeValues: marshall({
+        ':SK': 'PROFILE-',
+      }),
+    });
+
+    return students.Items.map(unmarshall as any).map(this.mapper.toRender);
   }
 
   findById(id: string): Promise<Maybe<Student>> {

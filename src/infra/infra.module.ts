@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 
 import { ApplicationModule } from 'application/application.module';
 import { CreateStudent } from 'application/use-cases/create-student';
+import { ListStudent } from 'application/use-cases/list-student';
 
 import { DynamoClientService } from './database/dynamo-client.service';
 import { DynamoRepositoryService } from './database/dynamo-repository.service';
@@ -18,6 +19,7 @@ import { SlugProvider } from './providers/slug/slug.provider';
     DynamoClientService,
     DynamoRepositoryService,
     CreateStudent,
+    ListStudent,
   ],
   exports: [
     SlugProvider,

@@ -9,17 +9,20 @@ import { SlugProvider } from 'infra/providers/slug/slug.provider';
 import { StudentMapper } from './mappers/student.mapper';
 import { StudentRespository } from './repositories/student.repository';
 import { CreateStudent } from './use-cases/create-student';
+import { ListStudent } from './use-cases/list-student';
 
 @Module({
   imports: [ConfigModule.forRoot()],
   providers: [
     StudentMapper,
     StudentRespository,
-    CreateStudent,
     SlugProvider,
     HashProvider,
     DynamoClientService,
     DynamoRepositoryService,
+    // Use cases
+    CreateStudent,
+    ListStudent,
   ],
   exports: [CreateStudent, StudentMapper, StudentRespository],
 })

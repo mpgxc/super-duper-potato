@@ -5,6 +5,9 @@ import {
   GetItemCommand,
   GetItemCommandInput,
   GetItemCommandOutput,
+  ScanCommand,
+  ScanCommandInput,
+  ScanCommandOutput,
 } from '@aws-sdk/client-dynamodb';
 import { Injectable } from '@nestjs/common';
 
@@ -35,11 +38,20 @@ export class DynamoRepositoryService {
     );
   }
 
-  async list(
+  async find(
     params: CustomType<GetItemCommandInput>,
   ): Promise<GetItemCommandOutput> {
     return this.client.send(
       new GetItemCommand({
+        ...params,
+        TableName: this.TableName,
+      }),
+    );
+  }
+
+  async list(params: CustomType<ScanCommandInput>): Promise<ScanCommandOutput> {
+    return this.client.send(
+      new ScanCommand({
         ...params,
         TableName: this.TableName,
       }),

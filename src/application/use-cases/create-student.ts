@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { StudentRespository } from 'application/repositories/student.repository';
-import { Either, failure } from 'commons/logic';
+import { Either, failure, success } from 'commons/logic';
 import { Student } from 'domain/entities/student';
 import {
   ICreateStudent,
@@ -37,7 +37,7 @@ class CreateStudent implements ICreateStudent<CreateStudentOutput> {
         password: await this.hasher.hash(password),
       });
 
-      await this.repository.update(student);
+      return success(await this.repository.update(student));
     } catch (error) {
       return failure(
         ApplicationError.build(
