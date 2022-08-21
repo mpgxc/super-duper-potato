@@ -2,8 +2,9 @@ import {
   Body,
   Post,
   Controller,
-  UnauthorizedException,
   Get,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 
 import { CreateStudent } from 'application/use-cases/create-student';
@@ -17,26 +18,20 @@ export class StudentController {
   @Post('/create')
   async create(
     @Body()
-    { document, email, name, password }: StudentInput,
+    payload: StudentInput,
   ): Promise<void> {
-    const session = await this.createStudent.handle({
-      document,
-      email,
-      name,
-      password,
-    });
+    const session = await this.createStudent.handle(payload);
 
     if (session?.hasError) {
-      throw new UnauthorizedException(
+      throw new HttpException(
         `${session.value.name} - ${session.value.message}`,
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
 
   @Get('/profile')
   async profile(@Body() event: any): Promise<any> {
-    console.log(event);
-
     return {
       ...event,
     };

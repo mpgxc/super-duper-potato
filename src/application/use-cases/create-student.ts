@@ -37,16 +37,12 @@ class CreateStudent implements ICreateStudent<CreateStudentOutput> {
         password: await this.hasher.hash(password),
       });
 
-      console.log({ student });
-
-      const response = await this.repository.update(student);
-
-      console.log({ response });
+      await this.repository.update(student);
     } catch (error) {
-      console.log({ error });
-
       return failure(
-        ApplicationError.build('Unexpected error on create student!'),
+        ApplicationError.build(
+          `Unexpected error on create student! ${error.message}`,
+        ),
       );
     }
   }

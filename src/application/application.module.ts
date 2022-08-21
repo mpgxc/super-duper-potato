@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 
 import { DynamoClientService } from 'infra/database/dynamo-client.service';
 import { DynamoRepositoryService } from 'infra/database/dynamo-repository.service';
@@ -10,7 +11,7 @@ import { StudentRespository } from './repositories/student.repository';
 import { CreateStudent } from './use-cases/create-student';
 
 @Module({
-  imports: [],
+  imports: [ConfigModule.forRoot()],
   providers: [
     StudentMapper,
     StudentRespository,

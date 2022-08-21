@@ -18,7 +18,7 @@ class StudentRespository implements IStudentRespository {
     const { document, id, email, name, password, slug } =
       this.mapper.toPersistence(item);
 
-    await this.client.setTableName('application-table').update({
+    await this.client.setTableName('SuperDuperPotatoTable').update({
       Item: marshall({
         PK: `STUDENT-${id}`,
         SK: `PROFILE-${slug}`,
