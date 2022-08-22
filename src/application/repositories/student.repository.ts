@@ -20,6 +20,23 @@ class StudentRespository implements IStudentRespository {
     this.client = client.setTableName(this.config.get('AWS_DYNAMODB_TABLE'));
   }
 
+  async findByEmail(email: string): Promise<Maybe<Student>> {
+    const student = await this.client.findIndex({
+      IndexName: 'email-Index',
+      KeyConditionExpression: 'email = :email',
+      ExpressionAttributeValues: marshall({
+        ':email': email,
+      }),
+      ScanIndexForward: false,
+    });
+
+    const [studentItem] = student.Items;
+
+    return studentItem
+      ? this.mapper.toDomain(unmarshall(studentItem) as any)
+      : null;
+  }
+
   async update(item: Student): Promise<void> {
     const { document, id, email, name, password, slug } =
       this.mapper.toPersistence(item);
@@ -27,7 +44,7 @@ class StudentRespository implements IStudentRespository {
     await this.client.update({
       Item: marshall({
         PK: `STUDENT-${id}`,
-        SK: `PROFILE-${slug}`,
+        SK: `PROFILE`,
         slug,
         name,
         email,
@@ -45,15 +62,26 @@ class StudentRespository implements IStudentRespository {
     const students = await this.client.list({
       FilterExpression: 'begins_with(SK, :SK)',
       ExpressionAttributeValues: marshall({
-        ':SK': 'PROFILE-',
+        ':SK': 'PROFILE',
       }),
     });
 
-    return students.Items.map(unmarshall as any).map(this.mapper.toRender);
+    return students.Items.length
+      ? students.Items.map(unmarshall as any).map(this.mapper.toRender)
+      : [];
   }
 
-  findById(id: string): Promise<Maybe<Student>> {
-    throw new Error('Method not implemented.');
+  async findById(id: string): Promise<Maybe<Student>> {
+    const student = await this.client.find({
+      Key: marshall({
+        PK: `STUDENT-${id}`,
+        SK: `PROFILE`,
+      }),
+    });
+
+    return student.Item
+      ? this.mapper.toDomain(unmarshall(student.Item) as any)
+      : null;
   }
 
   findByIdRender(id: string): Promise<Maybe<StudentProps>> {

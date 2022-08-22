@@ -5,6 +5,9 @@ import {
   GetItemCommand,
   GetItemCommandInput,
   GetItemCommandOutput,
+  QueryCommand,
+  QueryCommandInput,
+  QueryCommandOutput,
   ScanCommand,
   ScanCommandInput,
   ScanCommandOutput,
@@ -32,6 +35,17 @@ export class DynamoRepositoryService {
   ): Promise<PutItemCommandOutput> {
     return this.client.send(
       new PutItemCommand({
+        ...params,
+        TableName: this.TableName,
+      }),
+    );
+  }
+
+  async findIndex(
+    params: CustomType<QueryCommandInput>,
+  ): Promise<QueryCommandOutput> {
+    return this.client.send(
+      new QueryCommand({
         ...params,
         TableName: this.TableName,
       }),
