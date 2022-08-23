@@ -20,7 +20,7 @@ type CustomType<T> = Omit<T, 'TableName'>;
 
 @Injectable()
 export class DynamoRepositoryService {
-  private TableName: string;
+  private TableName!: string;
 
   constructor(private readonly client: DynamoClientService) {}
 

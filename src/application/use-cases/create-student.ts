@@ -38,10 +38,10 @@ class CreateStudent implements ICreateStudent<CreateStudentOutput> {
       });
 
       return success(await this.repository.update(student));
-    } catch (error) {
+    } catch ({ message }) {
       return failure(
         ApplicationError.build(
-          `Unexpected error on create student! ${error.message}`,
+          `Unexpected error on create student! ${message}`,
         ),
       );
     }

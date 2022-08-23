@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { UnableList } from 'application/errors/custom/UnableList';
 
+import { UnableList } from 'application/errors/custom/UnableList';
 import { StudentRespository } from 'application/repositories/student.repository';
 import { Either, failure, success } from 'commons/logic';
 import {
@@ -22,12 +22,10 @@ class ListStudent implements IListStudent<ListStudentOutput> {
 
       if (!students) UnableList.build('students');
 
-      return success(students as Array<TListStudentOutput>);
-    } catch (error) {
+      return success(students?.length ? students : []);
+    } catch ({ message }) {
       return failure(
-        ApplicationError.build(
-          `Unexpected error on list student! ${error.message}`,
-        ),
+        ApplicationError.build(`Unexpected error on list student! ${message}`),
       );
     }
   }

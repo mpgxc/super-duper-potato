@@ -1,16 +1,17 @@
 import {
+  Get,
   Body,
   Post,
   Controller,
-  Get,
-  HttpException,
   HttpStatus,
+  HttpException,
 } from '@nestjs/common';
 
 import { CreateStudent } from 'application/use-cases/create-student';
 import { ListStudent } from 'application/use-cases/list-student';
 
 import { StudentInput } from '../inputs/student.input';
+import { ListStudentOutput } from '../outputs/student.output';
 
 @Controller('student')
 export class StudentController {
@@ -35,7 +36,7 @@ export class StudentController {
   }
 
   @Get('/list')
-  async list(): Promise<any> {
+  async list(): Promise<ListStudentOutput> {
     const students = await this.listStudent.handle();
 
     if (students?.hasError) {

@@ -1,32 +1,30 @@
 import {
+  Length,
+  Matches,
+  IsEmail,
   IsString,
   IsNotEmpty,
-  IsEmail,
-  Min,
-  Max,
-  Matches,
+  IsNumberString,
 } from 'class-validator';
 
 export class StudentInput {
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string;
 
   @IsString()
   @IsNotEmpty()
   @IsEmail()
-  email: string;
+  email!: string;
 
-  @IsString()
+  @IsNumberString()
   @IsNotEmpty()
-  @Min(11)
-  @Max(14)
+  @Length(11, 11)
   @Matches(/[0-9]/)
-  document: string;
+  document!: string;
 
   @IsString()
   @IsNotEmpty()
-  @Min(8)
-  @Max(20)
-  password: string;
+  @Length(8, 20)
+  password!: string;
 }

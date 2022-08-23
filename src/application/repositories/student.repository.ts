@@ -4,8 +4,11 @@ import { ConfigService } from '@nestjs/config';
 
 import { StudentMapper } from 'application/mappers/student.mapper';
 import { Maybe } from 'commons/logic';
-import { Student, StudentProps } from 'domain/entities/student';
-import { IStudentRespository } from 'domain/repositories/student.repository';
+import { Student } from 'domain/entities/student';
+import {
+  IStudentRespository,
+  StudentResponse,
+} from 'domain/repositories/student.repository';
 import { DynamoRepositoryService } from 'infra/database/dynamo-repository.service';
 
 @Injectable()
@@ -17,7 +20,9 @@ class StudentRespository implements IStudentRespository {
     private readonly mapper: StudentMapper,
     private readonly config: ConfigService,
   ) {
-    this.client = client.setTableName(this.config.get('AWS_DYNAMODB_TABLE'));
+    this.client = client.setTableName(
+      this.config.get<string>('AWS_DYNAMODB_TABLE') as string,
+    );
   }
 
   async findByEmail(email: string): Promise<Maybe<Student>> {
@@ -30,7 +35,7 @@ class StudentRespository implements IStudentRespository {
       ScanIndexForward: false,
     });
 
-    const [studentItem] = student.Items;
+    const [studentItem] = student?.Items ?? [];
 
     return studentItem
       ? this.mapper.toDomain(unmarshall(studentItem) as any)
@@ -58,7 +63,7 @@ class StudentRespository implements IStudentRespository {
     throw new Error('Method not implemented.');
   }
 
-  async list(): Promise<Maybe<Array<StudentProps>>> {
+  async list(): Promise<Maybe<Array<StudentResponse>>> {
     const students = await this.client.list({
       FilterExpression: 'begins_with(SK, :SK)',
       ExpressionAttributeValues: marshall({
@@ -66,8 +71,8 @@ class StudentRespository implements IStudentRespository {
       }),
     });
 
-    return students.Items.length
-      ? students.Items.map(unmarshall as any).map(this.mapper.toRender)
+    return students?.Items?.length
+      ? students.Items.map(unmarshall as any).map(this.mapper.toRender as any)
       : [];
   }
 
@@ -79,12 +84,12 @@ class StudentRespository implements IStudentRespository {
       }),
     });
 
-    return student.Item
+    return student?.Item
       ? this.mapper.toDomain(unmarshall(student.Item) as any)
       : null;
   }
 
-  findByIdRender(id: string): Promise<Maybe<StudentProps>> {
+  findByIdRender(id: string): Promise<Maybe<StudentResponse>> {
     throw new Error('Method not implemented.');
   }
 }

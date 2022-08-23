@@ -26,7 +26,7 @@ class Student extends AggregateRoot<StudentProps> {
     return this._props.email;
   }
 
-  get avatar(): string {
+  get avatar(): string | undefined {
     return this._props.avatar;
   }
 
